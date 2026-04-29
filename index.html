@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verbos Irregulares en Inglés</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f172a;
+      --surface:   #1e293b;
+      --surface2:  #334155;
+      --border:    #475569;
+      --text:      #e2e8f0;
+      --dim:       #94a3b8;
+      --green:     #4ade80;
+      --red:       #f87171;
+      --yellow:    #fbbf24;
+      --cyan:      #22d3ee;
+      --accent:    #6366f1;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.25rem 1.5rem 3rem;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      flex: 1;
+      font-size: 1.4rem;
+      color: var(--cyan);
+      white-space: nowrap;
+    }
+
+    .stats {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.9rem;
+      color: var(--dim);
+    }
+    .stats b { color: var(--green); }
+    #remainingDisplay { color: var(--yellow); }
+
+    .controls { display: flex; gap: 0.5rem; }
+
+    button {
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    button:hover { background: var(--accent); border-color: var(--accent); }
+    button:disabled { opacity: 0.4; cursor: default; }
+
+    /* ── Learned table ── */
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--dim);
+      margin-bottom: 0.6rem;
+    }
+
+    #learnedSection { margin-bottom: 1.5rem; }
+
+    #noVerbs {
+      color: var(--dim);
+      font-style: italic;
+      font-size: 0.88rem;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    #learnedTable {
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      min-width: 480px;
+    }
+
+    #learnedTable th {
+      background: var(--surface2);
+      color: var(--dim);
+      font-weight: 600;
+      text-align: left;
+      padding: 0.35rem 0.85rem;
+      border: 1px solid var(--border);
+    }
+
+    #learnedTable td {
+      padding: 0.3rem 0.85rem;
+      border: 1px solid var(--border);
+      color: var(--green);
+      min-width: 110px;
+    }
+
+    #learnedTable tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+
+    /* ── Question card ── */
+    #questionCard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem 2rem;
+      max-width: 580px;
+    }
+
+    #dirLabel {
+      font-size: 0.8rem;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+
+    #clueWord {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 0.2rem;
+      line-height: 1.2;
+    }
+
+    #ansLabel {
+      font-size: 0.9rem;
+      color: var(--dim);
+      margin-bottom: 1.1rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.9rem;
+    }
+
+    #answerInput {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1.05rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #answerInput:focus  { border-color: var(--accent); }
+    #answerInput.ok     { border-color: var(--green); }
+    #answerInput.bad    { border-color: var(--red);
+                          animation: shake 0.3s ease; }
+
+    @keyframes shake {
+      0%,100%{ transform:translateX(0) }
+      25%    { transform:translateX(-6px) }
+      75%    { transform:translateX(6px) }
+    }
+
+    #checkBtn {
+      padding: 0.6rem 1.2rem;
+      background: var(--accent);
+      border-color: var(--accent);
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    /* ── Hint ── */
+    #hintWrap { margin-bottom: 0.6rem; min-height: 1.8rem; }
+
+    #hintLabel {
+      font-size: 0.75rem;
+      color: var(--dim);
+      margin-bottom: 0.15rem;
+    }
+
+    #hintLetters {
+      font-family: 'Courier New', monospace;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .lc { color: var(--green); }
+    .lw { color: var(--red); }
+
+    /* ── Feedback ── */
+    #feedback { font-size: 0.92rem; min-height: 1.3rem; }
+    .fb-ok  { color: var(--green); font-weight: 600; }
+    .fb-err { color: var(--red); }
+
+    /* ── Result overlay ── */
+    #overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    #overlay.show { display: flex; }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 2.5rem 3rem;
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+    }
+
+    .result-card h2 { color: var(--cyan); font-size: 1.3rem; margin-bottom: 1rem; }
+    #resultScore  { font-size: 3.5rem; font-weight: 800; color: var(--green); line-height: 1; }
+    #resultPct    { color: var(--dim); margin: 0.4rem 0 1.6rem; font-size: 1rem; }
+    .result-btns  { display: flex; gap: 0.75rem; justify-content: center; }
+
+    @media (max-width: 500px) {
+      body { padding: 1rem 1rem 3rem; }
+      h1 { font-size: 1.1rem; }
+      #clueWord { font-size: 1.7rem; }
+      #questionCard { padding: 1.25rem 1.1rem; }
+      .result-card { padding: 1.75rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Verbos Irregulares &mdash; Inglés</h1>
+  <div class="stats">
+    <span>Aciertos: <b id="scoreDisplay">0/0</b></span>
+    <span>Restantes: <b id="remainingDisplay">25</b></span>
+  </div>
+  <div class="controls">
+    <button id="resetBtn">↺ Reset</button>
+    <button id="endBtn">✕ Terminar</button>
+  </div>
+</header>
+
+<section id="learnedSection">
+  <div class="section-label">Verbos aprendidos</div>
+  <p id="noVerbs">Aún no has acertado ningún verbo.</p>
+  <div class="table-wrap">
+    <table id="learnedTable" style="display:none">
+      <thead>
+        <tr>
+          <th>Infinitivo</th><th>Past Simple</th>
+          <th>Infinitivo</th><th>Past Simple</th>
+        </tr>
+      </thead>
+      <tbody id="learnedBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<div id="questionCard">
+  <div id="dirLabel"></div>
+  <div id="clueWord"></div>
+  <div id="ansLabel"></div>
+  <div class="input-row">
+    <input id="answerInput" type="text"
+           autocomplete="off" autocorrect="off"
+           autocapitalize="off" spellcheck="false"
+           placeholder="Tu respuesta..." />
+    <button id="checkBtn">Verificar</button>
+  </div>
+  <div id="hintWrap" style="display:none">
+    <div id="hintLabel">Pista:</div>
+    <div id="hintLetters"></div>
+  </div>
+  <div id="feedback"></div>
+</div>
+
+<!-- Result overlay -->
+<div id="overlay">
+  <div class="result-card">
+    <h2 id="resultTitle"></h2>
+    <div id="resultScore"></div>
+    <div id="resultPct"></div>
+    <div class="result-btns">
+      <button id="playAgainBtn">Jugar de nuevo</button>
+      <button id="closeResultBtn">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const VERBS = [
+  ["choose","chose"],["drive","drove"],["fall","fell"],["feel","felt"],
+  ["find","found"],["fly","flew"],["forget","forgot"],["hear","heard"],
+  ["keep","kept"],["know","knew"],["leave","left"],["lose","lost"],
+  ["meet","met"],["run","ran"],["say","said"],["sell","sold"],
+  ["send","sent"],["sit","sat"],["sleep","slept"],["stand","stood"],
+  ["swim","swam"],["teach","taught"],["tell","told"],["think","thought"],
+  ["understand","understood"],
+];
+
+// ── State ──────────────────────────────────────────────────────────────────
+let queue = [], learned = [], correct = 0, total = 0;
+let clue, answer, waiting = false;
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildHint(input, ans) {
+  const container = document.getElementById('hintLetters');
+  container.innerHTML = '';
+  for (let i = 0; i < input.length; i++) {
+    const s = document.createElement('span');
+    s.textContent = input[i];
+    s.className = (i < ans.length && input[i] === ans[i]) ? 'lc' : 'lw';
+    container.appendChild(s);
+  }
+  for (let i = input.length; i < ans.length; i++) {
+    const s = document.createElement('span');
+    s.textContent = '_';
+    s.className = 'lw';
+    container.appendChild(s);
+  }
+  document.getElementById('hintWrap').style.display = '';
+}
+
+function setFeedback(msg, cls) {
+  const el = document.getElementById('feedback');
+  el.textContent = msg;
+  el.className = cls;
+}
+
+function updateStats() {
+  document.getElementById('scoreDisplay').textContent = `${correct}/${total}`;
+  document.getElementById('remainingDisplay').textContent = queue.length;
+}
+
+// ── Learned table ──────────────────────────────────────────────────────────
+function addLearned(inf, past) {
+  learned.push([inf, past]);
+  document.getElementById('noVerbs').style.display = 'none';
+  document.getElementById('learnedTable').style.display = '';
+
+  const tbody = document.getElementById('learnedBody');
+  const rows = tbody.querySelectorAll('tr');
+  const last = rows[rows.length - 1];
+
+  if (last) {
+    const cells = last.querySelectorAll('td');
+    if (cells[2].textContent === '') {
+      cells[2].textContent = inf;
+      cells[3].textContent = past;
+      return;
+    }
+  }
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${inf}</td><td>${past}</td><td></td><td></td>`;
+  tbody.appendChild(tr);
+}
+
+// ── Game flow ──────────────────────────────────────────────────────────────
+function initGame() {
+  queue   = shuffle(VERBS);
+  learned = [];
+  correct = 0;
+  total   = 0;
+  document.getElementById('learnedBody').innerHTML = '';
+  document.getElementById('learnedTable').style.display = 'none';
+  document.getElementById('noVerbs').style.display = '';
+  document.getElementById('overlay').classList.remove('show');
+  updateStats();
+  nextQuestion();
+}
+
+function nextQuestion() {
+  if (queue.length === 0) { showResults(true); return; }
+
+  const [inf, past] = queue[0];
+  const toPast = Math.random() < 0.5;
+
+  if (toPast) {
+    clue   = inf;
+    answer = past;
+    document.getElementById('dirLabel').textContent = 'Infinitivo';
+    document.getElementById('ansLabel').textContent  = '→ escribe el Past Simple:';
+  } else {
+    clue   = past;
+    answer = inf;
+    document.getElementById('dirLabel').textContent = 'Past Simple';
+    document.getElementById('ansLabel').textContent  = '→ escribe el Infinitivo:';
+  }
+
+  document.getElementById('clueWord').textContent = clue;
+  document.getElementById('answerInput').value     = '';
+  document.getElementById('answerInput').className = '';
+  document.getElementById('answerInput').disabled  = false;
+  document.getElementById('hintWrap').style.display = 'none';
+  document.getElementById('hintLetters').innerHTML  = '';
+  document.getElementById('checkBtn').disabled = false;
+  setFeedback('', '');
+  waiting = false;
+
+  document.getElementById('answerInput').focus();
+}
+
+function checkAnswer() {
+  if (waiting) return;
+
+  const inp = document.getElementById('answerInput');
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+
+  total++;
+
+  if (val === answer) {
+    correct++;
+    updateStats();
+
+    waiting = true;
+    inp.className = 'ok';
+    inp.disabled  = true;
+    document.getElementById('checkBtn').disabled = true;
+    setFeedback('✓ ¡Correcto!', 'fb-ok');
+
+    const [inf, past] = queue.shift();
+    addLearned(inf, past);
+
+    setTimeout(nextQuestion, 1300);
+
+  } else {
+    inp.className = 'bad';
+    setTimeout(() => inp.classList.remove('bad'), 350);
+    setFeedback('✗ Incorrecto. Inténtalo de nuevo.', 'fb-err');
+    buildHint(val, answer);
+    inp.value = '';
+    inp.focus();
+    updateStats();
+  }
+}
+
+function showResults(completed) {
+  const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  const scoreColor = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+
+  document.getElementById('resultTitle').textContent =
+    completed ? '¡Completaste todos los verbos!' : 'Juego terminado';
+  document.getElementById('resultScore').textContent = `${correct}/${total}`;
+  document.getElementById('resultScore').style.color = scoreColor;
+  document.getElementById('resultPct').textContent   = `${pct}% de aciertos`;
+  document.getElementById('overlay').classList.add('show');
+}
+
+// ── Events ─────────────────────────────────────────────────────────────────
+document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+document.getElementById('answerInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAnswer();
+});
+document.getElementById('resetBtn').addEventListener('click', initGame);
+document.getElementById('endBtn').addEventListener('click', () => showResults(false));
+document.getElementById('playAgainBtn').addEventListener('click', initGame);
+document.getElementById('closeResultBtn').addEventListener('click', () =>
+  document.getElementById('overlay').classList.remove('show')
+);
+
+// ── Start ──────────────────────────────────────────────────────────────────
+initGame();
+</script>
+</body>
+</html>
